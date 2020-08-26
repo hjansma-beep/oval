@@ -23,6 +23,10 @@ size = [570, 563]
 screen = pygame.display.set_mode(size)
 background_image = pygame.image.load("oval.jpg").convert()
 
+time_elapsed_since_last_action = 0
+clock = pygame.time.Clock()
+finish_list = []
+
 class Block(pygame.sprite.Sprite):
     """ This class represents the ball that moves in a circle. """
 
@@ -36,6 +40,8 @@ class Block(pygame.sprite.Sprite):
         self.center_x = 0
         self.center_y = 0
 
+        self.number = 0
+
         # Current angle in radians
         self.angle = 0
 
@@ -45,7 +51,7 @@ class Block(pygame.sprite.Sprite):
         # How fast to orbit, in radians per frame
         self.speed = 0
 
-        lap = False
+        self.start = False
 
     def update(self):
         """ Update the ball's position. """
@@ -56,7 +62,15 @@ class Block(pygame.sprite.Sprite):
         # Increase the angle in prep for the next round.
         self.angle -= self.speed
 
-    # def check_finish(self):
+    def check_start(self):
+        if self.rect.colliderect(start_rect):
+            self.start = True
+
+    def check_finish(self):
+        if self.rect.colliderect(finish_rect):
+            finish_list.append(self.number)
+            self.kill()
+
 
 # Initialize Pygame
 pygame.init()
@@ -68,7 +82,7 @@ block_list = pygame.sprite.Group()
 # This is a list of every sprite. All blocks and the player block as well.
 all_sprites_list = pygame.sprite.Group()
 
-def place_block(gridpos, angle):
+def place_block(gridpos, angle, number):
     # This represents a block
     block = Block()
     speed = random.randrange(1, 9)
@@ -82,22 +96,26 @@ def place_block(gridpos, angle):
     # Random start angle from 0 to 2pi
     block.angle = angle
     # radians per frame
-    #block.speed = speed / 1000
-    block.speed = 0.009
+    # block.speed = speed / 1000
+
+    block.number = number
+    block.speed = 0.01
     # Add the block to the list of objects
     block_list.add(block)
     all_sprites_list.add(block)
 
-place_block(0, 3.35)
-# place_block(45, 3.35)
-# place_block(0, 3.2)
-# place_block(45, 3.2)
+place_block(0, 3.2, 1)
+# place_block(45, 3.2, 2)
+# place_block(0, 3.35, 3)
+# place_block(45, 3.35, 4)
+# place_block(0, 3.5, 5)
+# place_block(45, 3.5, 6)
 
 # Loop until the user clicks the close button.
 done = False
 
 # Used to manage how fast the screen updates
-clock = pygame.time.Clock()
+# clock = pygame.time.Clock()
 
 score = 0
 
@@ -107,16 +125,28 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
 
+    # dt = clock.tick()
+    # time_elapsed_since_last_action += dt
+    # print(time_elapsed_since_last_action)
+
     all_sprites_list.update()
     # print(all_sprites_list)
-
-    # for block in block_list:
-    #     block.check_finish()
 
     # Clear the screen
     screen.fill(WHITE)
     screen.blit(background_image, [0, 0])
     pygame.draw.line(screen, WHITE, (290, 24), (290, 118))
+    start_rect = pygame.draw.rect(screen, BLUE, (331, 23, 1, 100))
+    finish_rect = pygame.draw.rect(screen, BLUE, (310, 23, 1, 100))
+
+    for block in block_list:
+        block.check_start()
+        # print(block.start)
+
+    for block in block_list:
+        if block.start == True:
+            block.check_finish()
+            print(finish_list)
 
     # Draw all the spites
     all_sprites_list.draw(screen)
