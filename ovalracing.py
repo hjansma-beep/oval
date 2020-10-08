@@ -96,20 +96,20 @@ def place_block(gridpos, angle, number):
     # Random start angle from 0 to 2pi
     block.angle = angle
     # radians per frame
-    # block.speed = speed / 1000
+    block.speed = speed / 1000
 
     block.number = number
-    block.speed = 0.01
+    # block.speed = 0.01
     # Add the block to the list of objects
     block_list.add(block)
     all_sprites_list.add(block)
 
 place_block(0, 3.2, 1)
-# place_block(45, 3.2, 2)
-# place_block(0, 3.35, 3)
-# place_block(45, 3.35, 4)
-# place_block(0, 3.5, 5)
-# place_block(45, 3.5, 6)
+place_block(45, 3.2, 2)
+place_block(0, 3.35, 3)
+place_block(45, 3.35, 4)
+place_block(0, 3.5, 5)
+place_block(45, 3.5, 6)
 
 # Loop until the user clicks the close button.
 done = False
@@ -138,6 +138,8 @@ while not done:
     pygame.draw.line(screen, WHITE, (290, 24), (290, 118))
     start_rect = pygame.draw.rect(screen, BLUE, (331, 23, 1, 100))
     finish_rect = pygame.draw.rect(screen, BLUE, (310, 23, 1, 100))
+    # screen.blit(background_image, [0, 0])
+
 
     for block in block_list:
         block.check_start()
